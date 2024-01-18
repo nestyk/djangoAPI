@@ -30,6 +30,20 @@ def upload(request): #API POST
         # Get Cursor
         cur = conn.cursor()
         data = request.POST #dict
+        try:
+            mydict = dict(data)
+
+            columns = ', '.join("`" + str(x).replace('/', '_') + "`" for x in mydict.keys())
+            values = ', '.join("'" + str(x).replace('/', '_') + "'" for x in mydict.values())
+            #sql = "INSERT INTO %s ( %s ) VALUES ( %s );" % ('datas', columns, values)
+
+            #print(sql)
+            for key in mydict.keys():
+                sql = "INSERT INTO datas ( %s ) VALUES ( %s );" % (key,mydict[key])
+                print(sql)
+                cur.execute(sql)
+        except Exception as e:
+            print(e)
 
         return JsonResponse({'status': '201', 'message': "Created!"}, status=201)
 
