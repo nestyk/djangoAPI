@@ -35,13 +35,16 @@ def upload(request): #API POST
 
             columns = ', '.join("`" + str(x).replace('/', '_') + "`" for x in mydict.keys())
             values = ', '.join("'" + str(x).replace('/', '_') + "'" for x in mydict.values())
-            #sql = "INSERT INTO %s ( %s ) VALUES ( %s );" % ('datas', columns, values)
-
+            #sql = "INSERT INTO %s ( `%s` ) VALUES ( %s );" % ('datas', columns, values)
             #print(sql)
+
             for key in mydict.keys():
-                sql = "INSERT INTO datas ( %s ) VALUES ( %s );" % (key,mydict[key])
-                print(sql)
-                cur.execute(sql)
+                for value in mydict[key]:
+                    cur.execute(
+                        "INSERT INTO datas (`dev_name`, `value`) VALUES (?, ?);",
+                        (key, value)
+                    )
+                    conn.commit()
         except Exception as e:
             print(e)
 
@@ -50,10 +53,10 @@ def upload(request): #API POST
     return render(request, '403.html', status=403)
 
 @csrf_exempt
-def update(request): #API PUT
+def update(request, id): #API PUT
     if request.method == 'PUT':
         return JsonResponse({'status': '200', 'message': "Updated!"}, status=200)
 
-def delete(request): #API DELETE
+def delete(request,id): #API DELETE
 
     return JsonResponse({'status': '204', 'message': "Deleted!"}, status=204)
