@@ -33,10 +33,6 @@ def upload(request): #API POST
         try:
             mydict = dict(data)
 
-            columns = ', '.join("`" + str(x).replace('/', '_') + "`" for x in mydict.keys())
-            values = ', '.join("'" + str(x).replace('/', '_') + "'" for x in mydict.values())
-            #sql = "INSERT INTO %s ( `%s` ) VALUES ( %s );" % ('datas', columns, values)
-            #print(sql)
 
             for key in mydict.keys():
                 for value in mydict[key]:
@@ -55,8 +51,46 @@ def upload(request): #API POST
 @csrf_exempt
 def update(request, id): #API PUT
     if request.method == 'PUT':
+        data = request.POST
+
+        try:
+            mydict = dict(data)
+            conn = mariadb.connect(
+                user="root",
+                password="toor",
+                host="127.0.0.1",
+                port=3306,
+                database="datas"
+
+            )
+            cur = conn.cursor()
+            for key in mydict.keys():
+                for value in mydict[key]:
+                    cur.execute("UPDATE datas SET dev_name = ?, value = ? WHERE id = ?",
+                              (key,value, id))
+                    conn.commit()
+
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+
         return JsonResponse({'status': '200', 'message': "Updated!"}, status=200)
 
 def delete(request,id): #API DELETE
+
+    try:
+        conn = mariadb.connect(
+            user="root",
+            password="toor",
+            host="127.0.0.1",
+            port=3306,
+            database="datas"
+
+        )
+        cur = conn.cursor()
+        cur.execute("DELETE FROM datas WHERE id = ?", (id,))
+        conn.commit()
+
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
 
     return JsonResponse({'status': '204', 'message': "Deleted!"}, status=204)
