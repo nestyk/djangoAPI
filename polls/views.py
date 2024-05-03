@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import mariadb
-
+import config
 
 def custom_404(request, exception):
     return render(request, '404.html', status=404)
@@ -16,11 +16,11 @@ def upload(request): #API POST
 
         try:
             conn = mariadb.connect(
-                user="root",
-                password="toor",
-                host="127.0.0.1",
-                port=3306,
-                database="datas"
+                user=config.DB_USER,
+                password=config.DB_PASSWORD,
+                host=config.DB_HOST,
+                port=config.DB_PORT,
+                database=config.DB_NAME
 
             )
         except mariadb.Error as e:
@@ -56,11 +56,11 @@ def update(request, id): #API PUT
         try:
             mydict = dict(data)
             conn = mariadb.connect(
-                user="root",
-                password="toor",
-                host="127.0.0.1",
-                port=3306,
-                database="datas"
+                user=config.DB_USER,
+                password=config.DB_PASSWORD,
+                host=config.DB_HOST,
+                port=config.DB_PORT,
+                database=config.DB_NAME
 
             )
             cur = conn.cursor()
@@ -79,11 +79,11 @@ def delete(request,id): #API DELETE
 
     try:
         conn = mariadb.connect(
-            user="root",
-            password="toor",
-            host="127.0.0.1",
-            port=3306,
-            database="datas"
+            user=config.DB_USER,
+            password=config.DB_PASSWORD,
+            host=config.DB_HOST,
+            port=config.DB_PORT,
+            database=config.DB_NAME
 
         )
         cur = conn.cursor()
